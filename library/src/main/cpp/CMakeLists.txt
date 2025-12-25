@@ -3,7 +3,12 @@
 
 # Sets the minimum version of CMake required to build the native library.
 
-cmake_minimum_required(VERSION 3.18.1)
+cmake_minimum_required(VERSION 3.22.1)
+
+project(gpuimage-library)
+
+# Enable 16KB page size support - comprehensive approach
+set(CMAKE_ANDROID_ARM64_PAGE_SIZE 16384)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
@@ -11,15 +16,23 @@ cmake_minimum_required(VERSION 3.18.1)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-        yuv-decoder
+    gpuimage-library
 
-        # Sets the library as a shared library.
-        SHARED
+    # Sets the library as a shared library.
+    SHARED
 
-        # Provides a relative path to your source file(s).
-        yuv-decoder.c)
+    # Provides a relative path to your source file(s).
+    yuv-decoder.c)
 
-target_link_options(yuv-decoder PRIVATE "-Wl,-z,max-page-size=16384")
+target_link_options(gpuimage-library PRIVATE
+    "-Wl,-z,max-page-size=16384"
+    "-Wl,-z,common-page-size=16384"
+)
+
+target_compile_options(gpuimage-library PRIVATE
+    "-ffunction-sections"
+    "-fdata-sections"
+)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -28,18 +41,18 @@ target_link_options(yuv-decoder PRIVATE "-Wl,-z,max-page-size=16384")
 # completing its build.
 
 find_library( # Sets the name of the path variable.
-        log-lib
+    log-lib
 
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        log)
+    # Specifies the name of the NDK library that
+    # you want CMake to locate.
+    log)
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-        yuv-decoder
+        gpuimage-library
 
         # Links the target library to the log library
         # included in the NDK.

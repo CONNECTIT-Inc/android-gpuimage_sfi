@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION as int
-    namespace "jp.co.cyberagent.gpuimage"
+    namespace "jp.co.cyberagent.android.gpuimage"
 
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION as int
@@ -30,24 +30,25 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'gpuimage'
-    bintrayUserOrg = 'cats-oss'
-    publishedGroupId = 'jp.co.cyberagent.android'
-    libraryName = 'gpuimage'
-    artifact = 'gpuimage'
-    libraryDescription = 'Image filters for Android with OpenGL (based on GPUImage for iOS)'
-    siteUrl = 'https://github.com/cats-oss/android-gpuimage'
-    gitUrl = 'https://github.com/cats-oss/android-gpuimage.git'
-    issueUrl = 'https://github.com/cats-oss/android-gpuimage/issues'
-    libraryVersion = VERSION_NAME
-    developerId = 'cats'
-    developerName = 'CATS'
-    developerEmail = 'dadadada.chop@gmail.com'
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.CONNECTIT-Inc'
+            artifactId = 'android-gpuimage-sfi'
+            version = '2.2.0'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
 }
